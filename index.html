@@ -7,122 +7,151 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── カラーパレット：食パン・コッペパン色調 ── */
 :root {
-  --crust:      #C8892A;   /* パン耳・焼き色 */
-  --crust-dk:   #9E6A18;   /* 濃い焼き色 */
-  --crust-lt:   #F0D9A8;   /* 薄い焼き色 */
-  --crumb:      #FAF3E3;   /* パンの中身・背景 */
-  --crumb2:     #FDF8EF;   /* カード背景 */
-  --sesame:     #8B6914;   /* ごま・アクセント文字 */
-  --ink:        #2A1F0E;   /* メインテキスト */
-  --ink2:       #5C4A28;   /* サブテキスト */
-  --ink3:       #A08B6A;   /* ミュートテキスト */
-  --line:       #E8D9BC;   /* ボーダー */
-  --ok:         #3A7D44;
-  --ok-lt:      #D4ECD9;
-  --warn:       #C47A1E;
-  --warn-lt:    #FBEACC;
-  --ng:         #B03020;
-  --ng-lt:      #F5DDD9;
-  --r:          14px;
-  --r-sm:       8px;
+  --crust:     #C8892A;
+  --crust-dk:  #9E6A18;
+  --crust-lt:  #F0D9A8;
+  --crumb:     #FAF3E3;
+  --crumb2:    #FDF8EF;
+  --sesame:    #7A5A10;
+  --ink:       #2A1F0E;
+  --ink2:      #5C4A28;
+  --ink3:      #A08B6A;
+  --line:      #E8D9BC;
+  --ok:        #3A7D44;
+  --ok-lt:     #D4ECD9;
+  --warn:      #C47A1E;
+  --warn-lt:   #FBEACC;
+  --ng:        #B03020;
+  --ng-lt:     #F5DDD9;
+  --r:         14px;
+
+  /* 接近バナーの高さ（JS で参照） */
+  --nearby-h:  0px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
 body {
   font-family: 'Noto Sans JP', sans-serif;
-  background: var(--crumb);
-  color: var(--ink);
-  min-height: 100dvh;
-  max-width: 430px;
-  margin: 0 auto;
-  position: relative;
-  overflow-x: hidden;
+  background: var(--crumb); color: var(--ink);
+  min-height: 100dvh; max-width: 430px; margin: 0 auto;
+  overflow-x: hidden; position: relative;
 }
-
-/* ── パンのクロワッサン模様の背景テクスチャ ── */
 body::before {
-  content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(ellipse 60% 40% at 15% 8%,  rgba(200,137,42,.08) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 35% at 85% 85%, rgba(200,137,42,.06) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 20% at 50% 50%, rgba(250,243,227,.4) 0%, transparent 70%);
+    radial-gradient(ellipse 60% 40% at 15% 8%, rgba(200,137,42,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(200,137,42,.05) 0%, transparent 60%);
 }
 
-/* 食パンスライス形状の装飾（背景の右端） */
-body::after {
-  content: '';
-  position: fixed; right: -60px; top: 30%; pointer-events: none; z-index: 0;
-  width: 120px; height: 160px;
-  background: rgba(200,137,42,.04);
-  border-radius: 55% 55% 48% 48% / 60% 60% 40% 40%;
-  border: 2px solid rgba(200,137,42,.06);
-}
-
-/* ══ ヘッダー ══ */
+/* ════════════════════
+   ヘッダー
+════════════════════ */
 .header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(250,243,227,.94);
-  backdrop-filter: blur(14px);
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(250,243,227,.96); backdrop-filter: blur(14px);
   border-bottom: 2px solid var(--crust-lt);
-  padding: 12px 18px 10px;
+  padding: 11px 18px 9px;
 }
 .header-row { display: flex; align-items: center; justify-content: space-between; }
-
-/* ロゴ：コッペパンSVG＋日本語 */
 .logo { display: flex; align-items: center; gap: 10px; }
-.logo-bread { flex-shrink: 0; }
-.logo-text-wrap { display: flex; flex-direction: column; gap: 1px; }
 .logo-ja {
   font-family: 'Noto Serif JP', serif;
-  font-size: 20px; font-weight: 700;
-  color: var(--sesame);
-  letter-spacing: .5px; line-height: 1;
+  font-size: 20px; font-weight: 700; color: var(--sesame); letter-spacing: .5px;
 }
-.logo-tagline {
-  font-size: 10px; color: var(--ink3);
-  letter-spacing: .3px; font-weight: 400;
-}
-
+.logo-tagline { font-size: 10px; color: var(--ink3); margin-top: 1px; }
 .icon-btn {
   width: 36px; height: 36px; border-radius: 50%;
   border: 1.5px solid var(--line); background: var(--crumb2);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 16px;
-  transition: background .15s, transform .1s;
+  cursor: pointer; font-size: 16px; transition: background .15s, transform .1s;
 }
 .icon-btn:active { transform: scale(.93); background: var(--line); }
 
-/* ══ 位置情報バー ══ */
+/* ════════════════════
+   位置情報ステータスバー
+════════════════════ */
 .geo-bar {
-  position: sticky; top: 60px; z-index: 99;
-  padding: 6px 18px; font-size: 12px;
+  position: sticky; top: 59px; z-index: 199;
+  padding: 5px 18px; font-size: 12px;
   display: flex; align-items: center; gap: 8px;
-  background: rgba(250,243,227,.94); backdrop-filter: blur(14px);
+  background: rgba(250,243,227,.96); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
 }
 .geo-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  transition: background .3s;
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; transition: background .3s;
 }
 .geo-dot.inactive  { background: var(--line); }
 .geo-dot.searching { background: var(--warn); animation: blink 1.2s infinite; }
 .geo-dot.active    { background: var(--ok); }
 .geo-dot.near      { background: var(--ng); animation: blink .7s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-.geo-label { flex: 1; color: var(--ink2); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+.geo-label { flex: 1; color: var(--ink2); font-size: 11px; }
 .geo-acc   { font-size: 11px; color: var(--ink3); }
 
-/* ══ タブ ══ */
-.tabs {
-  position: sticky; top: 93px; z-index: 98;
-  display: flex;
-  background: rgba(250,243,227,.94); backdrop-filter: blur(14px);
-  border-bottom: 1.5px solid var(--line);
+/* ════════════════════
+   接近バナー（常駐）
+════════════════════ */
+.nearby-banner {
+  position: sticky; top: 88px; z-index: 198;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .4s cubic-bezier(.25,.8,.25,1);
 }
+.nearby-banner.visible { max-height: 100px; }
+
+.nearby-banner-inner {
+  background: linear-gradient(135deg, #8A2010 0%, var(--ng) 100%);
+  padding: 11px 18px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 2px solid rgba(255,255,255,.15);
+}
+.nb-ping-wrap { position: relative; flex-shrink: 0; }
+.nb-ping {
+  width: 12px; height: 12px; border-radius: 50%; background: #fff;
+  animation: blink .7s infinite;
+}
+/* 電波輪 */
+.nb-ring {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.6);
+  animation: ring 1.4s ease-out infinite;
+}
+.nb-ring:nth-child(2) { animation-delay: .5s; }
+@keyframes ring {
+  0%  { width: 12px; height: 12px; opacity: .7; }
+  100%{ width: 36px; height: 36px; opacity: 0;  }
+}
+.nb-text { flex: 1; color: #fff; }
+.nb-store { font-size: 15px; font-weight: 700; letter-spacing: .3px; line-height: 1.2; }
+.nb-sub   { font-size: 11px; opacity: .8; margin-top: 2px; }
+.nb-dist  {
+  background: rgba(255,255,255,.2); color: #fff;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 11px; border-radius: 20px; flex-shrink: 0;
+}
+.nb-list-btn {
+  background: #fff; color: var(--ng);
+  border: none; border-radius: 20px;
+  padding: 6px 14px; font-size: 12px; font-weight: 700;
+  cursor: pointer; flex-shrink: 0;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: opacity .15s;
+}
+.nb-list-btn:active { opacity: .8; }
+
+/* ════════════════════
+   タブ
+════════════════════ */
+.tabs {
+  position: sticky; top: 88px; z-index: 197;
+  display: flex;
+  background: rgba(250,243,227,.96); backdrop-filter: blur(14px);
+  border-bottom: 1.5px solid var(--line);
+  transition: top .4s;
+}
+.tabs.with-banner { top: 151px; }   /* バナー分下がる */
 .tab {
   flex: 1; padding: 9px 2px; text-align: center;
   font-size: 12px; font-weight: 500; color: var(--ink3);
@@ -130,8 +159,18 @@ body::after {
   transition: color .2s, border-color .2s; user-select: none;
 }
 .tab.active { color: var(--crust-dk); border-bottom-color: var(--crust); }
+/* 買い物タブに件数バッジ */
+.tab-badge {
+  display: inline-block; background: var(--ng); color: #fff;
+  font-size: 10px; font-weight: 700;
+  min-width: 17px; height: 17px; border-radius: 9px;
+  line-height: 17px; padding: 0 4px;
+  margin-left: 3px; vertical-align: middle;
+}
 
-/* ══ コンテンツ ══ */
+/* ════════════════════
+   コンテンツ
+════════════════════ */
 .main { padding: 16px 18px 100px; position: relative; z-index: 1; }
 .view { display: none; }
 .view.active { display: block; }
@@ -141,78 +180,47 @@ body::after {
   margin-bottom: 10px; padding-left: 2px;
   display: flex; align-items: center; gap: 6px;
 }
-/* パン耳の小さな区切り線 */
-.sec-label::after {
-  content: ''; flex: 1; height: 1px; background: var(--line);
-}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
-/* ══ 在庫カード ══ */
+/* ════════════════════
+   在庫カード
+════════════════════ */
 .stock-card {
   background: var(--crumb2);
-  border-radius: var(--r);
-  /* 食パンの断面を意識した上部の丸み */
-  border-radius: 22px 22px 14px 14px;
-  border: 1.5px solid var(--line);
-  /* パン耳のような上部ボーダー */
-  border-top: 3px solid var(--crust-lt);
-  padding: 16px 16px 14px;
-  margin-bottom: 12px;
-  position: relative; overflow: hidden;
-  transition: transform .15s, box-shadow .15s;
+  border-radius: 20px 20px 13px 13px;
+  border: 1.5px solid var(--line); border-top: 3px solid var(--crust-lt);
+  padding: 14px 15px 13px;
+  margin-bottom: 11px; position: relative; overflow: hidden;
   animation: riseUp .35s ease both;
 }
-.stock-card:nth-child(1) { animation-delay: .04s; }
-.stock-card:nth-child(2) { animation-delay: .09s; }
-.stock-card:nth-child(3) { animation-delay: .14s; }
+.stock-card:nth-child(1){animation-delay:.04s}
+.stock-card:nth-child(2){animation-delay:.09s}
+.stock-card:nth-child(3){animation-delay:.14s}
 .stock-card:active { transform: scale(.99); }
-
-/* 残量ゲージ（左側） */
 .card-gauge {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  width: 4px; border-radius: 4px 0 0 4px;
-  transition: background .4s;
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  border-radius: 4px 0 0 4px; transition: background .4s;
 }
-
-/* カード内：右に少しパディング */
-.card-inner { padding-left: 8px; }
-.card-head  { display: flex; align-items: flex-start; justify-content: space-between; }
+.card-inner { padding-left: 7px; }
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; }
 .card-emoji { font-size: 26px; line-height: 1; }
-.status-badge {
-  font-size: 11px; font-weight: 600;
-  padding: 3px 9px; border-radius: 20px;
-}
+.status-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
 .card-name {
   font-family: 'Noto Serif JP', serif;
-  font-size: 18px; font-weight: 600;
-  margin-top: 8px; letter-spacing: .3px;
+  font-size: 18px; font-weight: 600; margin-top: 7px;
 }
 .qty-row { display: flex; align-items: baseline; gap: 4px; margin-top: 2px; }
-.qty-num  { font-size: 30px; font-weight: 600; line-height: 1; }
+.qty-num { font-size: 30px; font-weight: 600; line-height: 1; }
 .qty-unit { font-size: 13px; color: var(--ink3); }
-
-/* プログレスバー（パンの断面のような丸み） */
 .prog-track {
-  height: 8px; background: var(--crust-lt);
-  border-radius: 4px; margin-top: 12px; overflow: hidden;
+  height: 7px; background: var(--crust-lt); border-radius: 4px; margin-top: 11px; overflow: hidden;
 }
-.prog-fill {
-  height: 100%; border-radius: 4px;
-  transition: width .5s cubic-bezier(.34,1.2,.64,1), background .4s;
-  /* パンの焼き色グラデーション */
-  position: relative;
-}
-.prog-fill::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 60%, transparent 100%);
-  border-radius: 4px;
-}
-
-/* 操作行 */
+.prog-fill { height: 100%; border-radius: 4px; transition: width .5s cubic-bezier(.34,1.2,.64,1), background .4s; }
 .card-acts { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
 .qty-ctrl {
   display: flex; align-items: center;
-  background: var(--crumb); border-radius: 24px;
-  border: 1.5px solid var(--line); overflow: hidden; flex: 1;
+  background: var(--crumb); border-radius: 24px; border: 1.5px solid var(--line);
+  overflow: hidden; flex: 1;
 }
 .qbtn {
   width: 36px; height: 36px; border: none; background: none;
@@ -226,95 +234,137 @@ body::after {
   height: 36px; padding: 0 13px; border-radius: 24px;
   border: 1.5px solid var(--line); background: var(--crumb2);
   font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink2);
-  white-space: nowrap; font-family: 'Noto Sans JP', sans-serif;
-  transition: background .12s, border-color .12s;
+  white-space: nowrap; font-family: 'Noto Sans JP', sans-serif; transition: background .12s;
 }
 .act-btn:active { background: var(--line); }
 .act-btn.list-add { border-color: var(--crust-lt); background: var(--crust-lt); color: var(--sesame); font-weight: 600; }
 .act-btn.listed   { color: var(--ink3); font-size: 11px; }
 
-/* ステータスカラー */
-.s-ok    { color: var(--ok);   background: var(--ok-lt); }
-.s-low   { color: var(--warn); background: var(--warn-lt); }
-.s-empty { color: var(--ng);   background: var(--ng-lt); }
-.g-ok    { background: var(--ok); }
-.g-low   { background: var(--warn); }
-.g-empty { background: var(--ng); }
-.f-ok    { background: linear-gradient(90deg, var(--ok) 0%, #5AA866 100%); }
-.f-low   { background: linear-gradient(90deg, var(--warn) 0%, #D4921E 100%); }
-.f-empty { background: var(--ng); }
+.s-ok   { color: var(--ok);   background: var(--ok-lt); }
+.s-low  { color: var(--warn); background: var(--warn-lt); }
+.s-empty{ color: var(--ng);   background: var(--ng-lt); }
+.g-ok   { background: var(--ok); }
+.g-low  { background: var(--warn); }
+.g-empty{ background: var(--ng); }
+.f-ok   { background: linear-gradient(90deg,var(--ok),#5AA866); }
+.f-low  { background: linear-gradient(90deg,var(--warn),#D4921E); }
+.f-empty{ background: var(--ng); }
 
-/* ══ 買い物リスト ══ */
-.shop-empty { text-align: center; padding: 48px 20px; color: var(--ink3); }
-.shop-empty-icon { font-size: 52px; margin-bottom: 14px; }
-.shop-empty-txt  { font-size: 14px; line-height: 1.8; }
-
-.summary-bar {
-  background: linear-gradient(135deg, var(--crust-dk) 0%, var(--crust) 100%);
-  color: #fff;
-  border-radius: 20px 20px 14px 14px;
-  border-top: 3px solid rgba(255,255,255,.2);
-  padding: 14px 16px; margin-bottom: 18px;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 4px 16px rgba(200,137,42,.25);
+/* ════════════════════
+   買い物リスト（大きく・見やすく）
+════════════════════ */
+.shop-empty {
+  text-align: center; padding: 44px 20px; color: var(--ink3);
 }
-.summ-count { font-size: 30px; font-weight: 700; line-height: 1; }
-.summ-txt   { flex: 1; font-size: 14px; line-height: 1.6; }
-.summ-icon  { font-size: 28px; }
+.shop-empty-icon { font-size: 50px; margin-bottom: 12px; }
+.shop-empty-txt  { font-size: 14px; line-height: 1.9; }
 
+/* 購入予定カウントバー */
+.list-header {
+  background: linear-gradient(135deg, var(--crust-dk), var(--crust));
+  color: #fff; border-radius: 20px 20px 13px 13px;
+  border-top: 3px solid rgba(255,255,255,.2);
+  padding: 13px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 4px 16px rgba(200,137,42,.22);
+}
+.lh-count { font-size: 30px; font-weight: 700; line-height: 1; }
+.lh-text  { flex: 1; font-size: 13px; line-height: 1.6; }
+.lh-all-done {
+  background: var(--ok); border-radius: 20px 20px 13px 13px;
+  color: #fff; padding: 13px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(58,125,68,.25);
+}
+
+/* 買い物アイテム（大きく・タップしやすく） */
 .shop-item {
   background: var(--crumb2);
-  border-radius: 18px 18px 12px 12px;
-  border: 1.5px solid var(--line);
-  border-top: 2.5px solid var(--crust-lt);
-  padding: 13px 15px;
-  margin-bottom: 9px;
-  display: flex; align-items: center; gap: 12px;
+  border-radius: 20px 20px 13px 13px;
+  border: 1.5px solid var(--line); border-top: 3px solid var(--crust-lt);
+  margin-bottom: 10px;
   position: relative; overflow: hidden;
-  transition: opacity .25s;
+  transition: opacity .25s, transform .1s;
   animation: riseUp .3s ease both;
+  cursor: pointer;
 }
-.shop-item.checked { opacity: .5; }
+.shop-item:active { transform: scale(.99); }
+.shop-item.checked { opacity: .42; }
+
+/* ステータス強調ライン（左） */
+.shop-item.st-low   { border-left: 5px solid var(--warn); }
+.shop-item.st-empty { border-left: 5px solid var(--ng); box-shadow: 0 0 0 2px rgba(176,48,32,.08); }
+
+.shop-item-body {
+  display: flex; align-items: center;
+  gap: 14px; padding: 16px 16px 14px;
+}
+
+/* チェックボタン（大きく） */
 .check-circle {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 2px solid var(--line); background: var(--crumb);
-  cursor: pointer; flex-shrink: 0;
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  border: 2.5px solid var(--line); background: var(--crumb);
   display: flex; align-items: center; justify-content: center;
-  transition: background .15s, border-color .15s; font-size: 13px;
+  font-size: 22px; transition: background .15s, border-color .2s, transform .1s;
 }
-.shop-item.checked .check-circle { background: var(--ok); border-color: var(--ok); color: #fff; }
-.shop-emoji { font-size: 22px; }
-.shop-info  { flex: 1; }
-.shop-name  { font-size: 15px; font-weight: 500; }
-.shop-qty   { font-size: 12px; color: var(--ink3); margin-top: 2px; }
-.shop-src {
-  font-size: 10px; color: var(--ink3);
-  background: var(--crumb); padding: 2px 7px; border-radius: 10px;
-  border: 1px solid var(--line);
+.check-circle:active { transform: scale(.92); }
+.shop-item.checked .check-circle {
+  background: var(--ok); border-color: var(--ok); color: #fff;
 }
+
+.shop-item-info { flex: 1; min-width: 0; }
+.shop-emoji  { font-size: 28px; line-height: 1; margin-bottom: 5px; }
+.shop-name   { font-family: 'Noto Serif JP', serif; font-size: 22px; font-weight: 700; }
+
+/* 在庫状況の行（残量 → 購入後） */
+.shop-stock-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 6px; flex-wrap: wrap;
+}
+.shop-stock-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.shop-arrow { font-size: 14px; color: var(--ink3); }
+.shop-after {
+  font-size: 13px; font-weight: 600; color: var(--ok);
+  background: var(--ok-lt); padding: 3px 10px; border-radius: 20px;
+}
+
+/* 現在在庫テキスト */
+.shop-current { font-size: 11px; color: var(--ink3); margin-top: 4px; }
+
+/* ミニプログレスバー */
+.shop-prog {
+  height: 5px; background: var(--crust-lt); border-radius: 3px; margin-top: 8px;
+  overflow: hidden;
+}
+.shop-prog-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+
+/* チェック時フラッシュ */
 .reflect-flash {
   position: absolute; inset: 0; pointer-events: none;
-  background: var(--ok-lt); opacity: 0; border-radius: inherit;
-  transition: opacity .08s;
+  background: var(--ok-lt); opacity: 0; border-radius: inherit; transition: opacity .08s;
 }
 .reflect-flash.on { opacity: 1; }
 
-/* ══ 店舗タブ ══ */
+/* 購入済みセパレーター */
+.done-sep {
+  font-size: 10px; color: var(--ink3); margin: 16px 0 8px;
+  font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+}
+
+/* ════════════════════
+   店舗タブ
+════════════════════ */
 .loc-panel {
   background: var(--crumb2); border-radius: var(--r);
   border: 1.5px solid var(--line); padding: 14px 16px; margin-bottom: 14px;
 }
 .store-card {
-  background: var(--crumb2);
-  border-radius: 18px 18px 12px 12px;
-  border: 1.5px solid var(--line);
-  border-top: 2.5px solid var(--crust-lt);
-  padding: 14px 15px; margin-bottom: 10px;
-  animation: riseUp .3s ease both;
+  background: var(--crumb2); border-radius: 18px 18px 12px 12px;
+  border: 1.5px solid var(--line); border-top: 2.5px solid var(--crust-lt);
+  padding: 14px 15px; margin-bottom: 10px; animation: riseUp .3s ease both;
 }
 .store-card.nearby {
-  border-color: var(--ng);
-  border-top-color: var(--ng);
+  border-color: var(--ng); border-top-color: var(--ng);
   box-shadow: 0 0 0 3px rgba(176,48,32,.1);
 }
 .store-card-head { display: flex; align-items: center; gap: 10px; }
@@ -326,8 +376,7 @@ body::after {
   flex: 1; height: 34px; border-radius: 20px;
   border: 1.5px solid var(--line); background: var(--crumb);
   font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink2);
-  font-family: 'Noto Sans JP', sans-serif;
-  transition: background .12s;
+  font-family: 'Noto Sans JP', sans-serif; transition: background .12s;
 }
 .store-btn:active { background: var(--line); }
 .store-btn.primary { background: var(--crust); border-color: var(--crust); color: #fff; }
@@ -337,8 +386,6 @@ body::after {
   background: var(--ng-lt); padding: 2px 7px; border-radius: 10px;
   animation: blink .8s infinite;
 }
-
-/* 店舗追加フォーム */
 .add-store-form {
   background: var(--crumb2); border-radius: var(--r);
   border: 1.5px dashed var(--line); padding: 14px 16px; margin-bottom: 12px;
@@ -349,8 +396,7 @@ body::after {
 .form-input {
   height: 38px; border-radius: 10px; border: 1.5px solid var(--line);
   background: var(--crumb); padding: 0 12px; font-size: 14px;
-  font-family: 'Noto Sans JP', sans-serif; color: var(--ink);
-  transition: border-color .15s;
+  font-family: 'Noto Sans JP', sans-serif; color: var(--ink); transition: border-color .15s;
 }
 .form-input:focus { outline: none; border-color: var(--crust); }
 .form-row-2 { display: flex; gap: 8px; }
@@ -360,19 +406,17 @@ body::after {
   border: 1.5px solid var(--crust); background: var(--crust-lt); color: var(--sesame);
   font-size: 12px; font-weight: 600; cursor: pointer; margin-bottom: 9px;
   font-family: 'Noto Sans JP', sans-serif;
-  transition: background .15s;
 }
-.use-current:active { background: var(--line); }
 .add-btn {
-  width: 100%; height: 40px; border-radius: 24px;
-  border: none; background: var(--crust); color: #fff;
-  font-size: 14px; font-weight: 600; cursor: pointer;
-  font-family: 'Noto Sans JP', sans-serif;
-  transition: background .15s;
+  width: 100%; height: 40px; border-radius: 24px; border: none;
+  background: var(--crust); color: #fff; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .15s;
 }
 .add-btn:active { background: var(--crust-dk); }
 
-/* ══ 設定 ══ */
+/* ════════════════════
+   設定
+════════════════════ */
 .thresh-panel {
   background: var(--crumb2); border-radius: var(--r);
   border: 1.5px solid var(--line); padding: 14px 16px; margin-bottom: 12px;
@@ -395,14 +439,15 @@ body::after {
 .t-btn {
   width: 30px; height: 30px; border: none; background: none;
   font-size: 18px; cursor: pointer; color: var(--ink2);
-  display: flex; align-items: center; justify-content: center;
-  transition: background .12s;
+  display: flex; align-items: center; justify-content: center; transition: background .12s;
 }
 .t-btn:active { background: var(--line); }
 .t-val  { width: 42px; text-align: center; font-size: 13px; font-weight: 600; }
 .t-unit { font-size: 11px; color: var(--ink3); min-width: 22px; }
 
-/* ══ UNDOバナー ══ */
+/* ════════════════════
+   UNDOバナー
+════════════════════ */
 .undo-banner {
   position: fixed; bottom: 24px; left: 50%;
   transform: translateX(-50%) translateY(80px);
@@ -416,120 +461,11 @@ body::after {
 .undo-btn {
   background: rgba(255,255,255,.2); border: none; color: #fff;
   padding: 4px 11px; border-radius: 18px; font-size: 13px; font-weight: 600;
-  cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
-  transition: background .12s;
+  cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .12s;
 }
 .undo-btn:active { background: rgba(255,255,255,.35); }
 
-/* ══ ポップアップトースター通知 ══ */
-/* トースター本体 */
-.toaster-wrap {
-  position: fixed; bottom: -280px; left: 50%; transform: translateX(-50%);
-  width: calc(100% - 32px); max-width: 390px;
-  z-index: 1000;
-  transition: bottom .45s cubic-bezier(.25,.8,.25,1.4);
-  filter: drop-shadow(0 -4px 20px rgba(158,106,24,.35));
-}
-.toaster-wrap.visible { bottom: 20px; }
-
-/* トースター本体（下部の機械部分） */
-.toaster-body {
-  background: linear-gradient(180deg, #D4943A 0%, #B87820 60%, #9A6410 100%);
-  border-radius: 10px 10px 16px 16px;
-  padding: 10px 14px 14px;
-  position: relative;
-  border: 2px solid #8A5A0C;
-}
-
-/* トースタースロット（上部の切り込み） */
-.toaster-slot {
-  position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
-  width: 70%; height: 10px;
-  background: #7A4E08;
-  border-radius: 0 0 4px 4px;
-}
-
-/* トースターのつまみ・ボタン装飾 */
-.toaster-deco {
-  display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-top: 4px;
-}
-.toaster-knob {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #E8B060, #8A5A0C);
-  border: 1.5px solid #7A4E08; flex-shrink: 0;
-}
-.toaster-label {
-  font-size: 10px; color: rgba(255,255,255,.6); letter-spacing: 1px; font-weight: 500;
-}
-
-/* トーストが飛び出すアニメーション */
-.toast-bread {
-  background: linear-gradient(180deg, #F5D98A 0%, #E8C060 40%, #D4A040 100%);
-  border-radius: 8px 8px 4px 4px;
-  border: 1.5px solid #C49030;
-  padding: 12px 14px 10px;
-  position: relative;
-  /* ゴマ粒の点々 */
-  background-image:
-    linear-gradient(180deg, #F5D98A 0%, #E8C060 40%, #D4A040 100%),
-    radial-gradient(circle, rgba(100,70,10,.3) 1px, transparent 1px);
-  background-size: 100% 100%, 12px 12px;
-  margin-bottom: 0;
-  transform: translateY(0);
-  animation: none;
-}
-.toaster-wrap.visible .toast-bread {
-  animation: toastPop .5s cubic-bezier(.25,.8,.25,1.4) .2s both;
-}
-@keyframes toastPop {
-  0%   { transform: translateY(8px); }
-  60%  { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
-}
-
-/* トーストの焼き目（上部の濃い色） */
-.toast-bread::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 6px;
-  background: linear-gradient(180deg, #C49030 0%, transparent 100%);
-  border-radius: 8px 8px 0 0; opacity: .6;
-}
-
-.notif-head  { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-.notif-icon  { font-size: 16px; }
-.notif-app   { font-size: 11px; color: rgba(100,70,10,.7); font-weight: 600; letter-spacing: .5px; }
-.notif-body  { font-size: 14px; font-weight: 600; color: var(--sesame); line-height: 1.5; }
-.notif-acts  { display: flex; gap: 7px; margin-top: 10px; }
-.notif-act   {
-  flex: 1; height: 34px; border-radius: 18px; border: none;
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  font-family: 'Noto Sans JP', sans-serif; transition: opacity .12s;
-}
-.notif-act:active { opacity: .8; }
-.notif-act.open    { background: var(--sesame); color: #fff; }
-.notif-act.dismiss { background: rgba(100,70,10,.12); color: var(--sesame); }
-
-/* 湯気アニメーション */
-.steam { position: absolute; top: -22px; display: flex; gap: 6px; left: 50%; transform: translateX(-50%); }
-.steam-line {
-  width: 3px; height: 18px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, transparent, rgba(200,137,42,.5));
-  animation: steam 1.5s ease-in-out infinite;
-  opacity: 0;
-}
-.steam-line:nth-child(2) { animation-delay: .3s; height: 14px; }
-.steam-line:nth-child(3) { animation-delay: .6s; }
-.toaster-wrap.visible .steam-line { opacity: 1; }
-@keyframes steam {
-  0%   { transform: translateY(0) scaleX(1); opacity: .5; }
-  100% { transform: translateY(-14px) scaleX(1.5); opacity: 0; }
-}
-
-@keyframes riseUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes riseUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
 <body>
@@ -538,58 +474,68 @@ body::after {
 <div class="header">
   <div class="header-row">
     <div class="logo">
-      <!-- コッペパン SVG ロゴ -->
-      <svg class="logo-bread" width="42" height="26" viewBox="0 0 42 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- コッペパン本体 -->
+      <svg width="40" height="24" viewBox="0 0 42 26" fill="none">
         <ellipse cx="21" cy="16" rx="20" ry="9" fill="#E8C060"/>
-        <!-- 焼き色グラデーション（上面） -->
-        <ellipse cx="21" cy="13" rx="19" ry="8" fill="url(#coppe-grad)"/>
-        <!-- 中央の割れ目線 -->
+        <ellipse cx="21" cy="13" rx="19" ry="8" fill="url(#cg)"/>
         <path d="M6 13 Q21 9 36 13" stroke="#C49030" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".7"/>
-        <!-- ゴマ粒 -->
         <ellipse cx="14" cy="11" rx="1.2" ry=".7" fill="#8B6914" opacity=".6" transform="rotate(-15 14 11)"/>
-        <ellipse cx="21" cy="9.5" rx="1.2" ry=".7" fill="#8B6914" opacity=".6" transform="rotate(5 21 9.5)"/>
+        <ellipse cx="21" cy="9.5" rx="1.2" ry=".7" fill="#8B6914" opacity=".6"/>
         <ellipse cx="28" cy="11" rx="1.2" ry=".7" fill="#8B6914" opacity=".6" transform="rotate(-10 28 11)"/>
-        <!-- パン耳（左右端） -->
-        <ellipse cx="3" cy="16" rx="3" ry="7" fill="#C49030"/>
+        <ellipse cx="3"  cy="16" rx="3" ry="7" fill="#C49030"/>
         <ellipse cx="39" cy="16" rx="3" ry="7" fill="#C49030"/>
-        <!-- 下部の陰影 -->
-        <ellipse cx="21" cy="23" rx="18" ry="3.5" fill="#C49030" opacity=".4"/>
+        <ellipse cx="21" cy="23" rx="18" ry="3.5" fill="#C49030" opacity=".35"/>
         <defs>
-          <radialGradient id="coppe-grad" cx="40%" cy="30%" r="70%">
+          <radialGradient id="cg" cx="40%" cy="30%" r="70%">
             <stop offset="0%"   stop-color="#F5D98A"/>
             <stop offset="50%"  stop-color="#E8C060"/>
             <stop offset="100%" stop-color="#C49030"/>
           </radialGradient>
         </defs>
       </svg>
-      <div class="logo-text-wrap">
+      <div>
         <div class="logo-ja">アシタノパン</div>
         <div class="logo-tagline">明日の食卓を、今日整える</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
-      <div class="icon-btn" onclick="toggleGeo()" title="位置情報">📍</div>
+      <div class="icon-btn" onclick="toggleGeo()">📍</div>
     </div>
   </div>
 </div>
 
-<!-- 位置情報バー -->
+<!-- 位置情報ステータスバー -->
 <div class="geo-bar">
   <div class="geo-dot inactive" id="geo-dot"></div>
   <div class="geo-label" id="geo-label">位置情報：オフ</div>
   <div class="geo-acc"   id="geo-acc"></div>
 </div>
 
+<!-- ★ 接近バナー（常駐・スティッキー） -->
+<div class="nearby-banner" id="nearby-banner">
+  <div class="nearby-banner-inner">
+    <div class="nb-ping-wrap">
+      <div class="nb-ping"></div>
+      <div class="nb-ring"></div>
+      <div class="nb-ring"></div>
+    </div>
+    <div class="nb-text">
+      <div class="nb-store" id="nb-store">スーパー名</div>
+      <div class="nb-sub"  id="nb-sub">付近にいます</div>
+    </div>
+    <div class="nb-dist" id="nb-dist"></div>
+    <button class="nb-list-btn" onclick="goToList()">リストを見る</button>
+  </div>
+</div>
+
 <!-- タブ -->
-<div class="tabs">
+<div class="tabs" id="tabs">
   <div class="tab active" data-tab="stock"    onclick="switchTab('stock')">📦 在庫</div>
-  <div class="tab"        data-tab="shopping" onclick="switchTab('shopping')">🛒 リスト</div>
+  <div class="tab"        data-tab="shopping" onclick="switchTab('shopping')">🛒 リスト<span class="tab-badge" id="list-badge" style="display:none"></span></div>
   <div class="tab"        data-tab="location" onclick="switchTab('location')">📍 店舗</div>
   <div class="tab"        data-tab="settings" onclick="switchTab('settings')">⚙️ 設定</div>
 </div>
 
-<!-- メインコンテンツ -->
+<!-- コンテンツ -->
 <div class="main">
 
   <!-- 在庫 -->
@@ -600,7 +546,7 @@ body::after {
 
   <!-- 買い物リスト -->
   <div class="view" id="view-shopping">
-    <div id="shopping-summary"></div>
+    <div id="list-header-area"></div>
     <div class="sec-label">買い物リスト</div>
     <div id="shopping-list"></div>
   </div>
@@ -621,11 +567,11 @@ body::after {
       <div class="form-row-2">
         <div class="form-row">
           <div class="form-label">緯度</div>
-          <input class="form-input" id="inp-lat" type="number" step="0.000001" placeholder="35.470000">
+          <input class="form-input" id="inp-lat" type="number" step="0.000001">
         </div>
         <div class="form-row">
           <div class="form-label">経度</div>
-          <input class="form-input" id="inp-lng" type="number" step="0.000001" placeholder="133.050000">
+          <input class="form-input" id="inp-lng" type="number" step="0.000001">
         </div>
       </div>
       <div class="form-row">
@@ -673,6 +619,7 @@ body::after {
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- UNDO バナー -->
@@ -681,215 +628,160 @@ body::after {
   <button class="undo-btn" onclick="doUndo()">元に戻す</button>
 </div>
 
-<!-- ポップアップトースター通知 -->
-<div class="toaster-wrap" id="toaster-wrap">
-  <div class="toast-bread">
-    <div class="steam">
-      <div class="steam-line"></div>
-      <div class="steam-line"></div>
-      <div class="steam-line"></div>
-    </div>
-    <div class="notif-head">
-      <span class="notif-icon">🍞</span>
-      <span class="notif-app">アシタノパン</span>
-    </div>
-    <div class="notif-body" id="notif-body"></div>
-    <div class="notif-acts">
-      <button class="notif-act open"    onclick="openShoppingFromNotif()">リストを開く</button>
-      <button class="notif-act dismiss" onclick="dismissNotif()">閉じる</button>
-    </div>
-  </div>
-  <div class="toaster-body">
-    <div class="toaster-slot"></div>
-    <div class="toaster-deco">
-      <div class="toaster-knob"></div>
-      <div class="toaster-knob"></div>
-      <div class="toaster-label">スーパー付近</div>
-    </div>
-  </div>
-</div>
-
 <script>
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════
 //  データ
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════
 const ITEMS = [
   { id:'egg',  name:'たまご', emoji:'🥚', unit:'個' },
   { id:'milk', name:'牛乳',   emoji:'🥛', unit:'ml' },
   { id:'moya', name:'もやし', emoji:'🌱', unit:'g'  },
 ];
-
 const state = {
-  stock:      { egg:6,   milk:400,  moya:200 },
-  thresholds: { egg:4,   milk:300,  moya:100 },
-  defaultQty: { egg:10,  milk:1000, moya:200 },
-  shoppingList: [], nextId: 1,
-  stores: [
+  stock:      { egg:6,  milk:400,  moya:200 },
+  thresholds: { egg:4,  milk:300,  moya:100 },
+  defaultQty: { egg:10, milk:1000, moya:200 },
+  shoppingList:[], nextId:1,
+  stores:[
     { id:'s1', name:'スーパーABC 松江店', lat:35.4682, lng:133.0485, radius:300, lastNotified:null },
     { id:'s2', name:'マルナカ 東出雲店',  lat:35.4320, lng:133.1020, radius:200, lastNotified:null },
   ],
-  geo: { watching:false, watchId:null, lat:null, lng:null, acc:null },
+  geo:{ watching:false, watchId:null, lat:null, lng:null, acc:null },
+  nearbyStore: null,
 };
-
-let undoStack = null, undoTimer = null, geoInterval = null;
+let undoStack=null, undoTimer=null, geoInterval=null;
 
 // ── ユーティリティ ──
-function getStatus(id) {
-  const q=state.stock[id], t=state.thresholds[id];
-  return q===0?'empty':q<=t?'low':'ok';
-}
-const SL = { ok:'✓ 在庫あり', low:'⚠ 残り少', empty:'✕ 切れ' };
-function isInList(id)  { return state.shoppingList.some(i=>i.itemId===id&&!i.checkedAt); }
-function addToList(id, auto=false) {
-  if (isInList(id)) return;
-  state.shoppingList.push({ id:state.nextId++, itemId:id, addedAuto:auto, checkedAt:null });
-}
-function checkAutoAdd(id) { if (getStatus(id)!=='ok'&&!isInList(id)) addToList(id,true); }
-function changeStock(id, delta, label) {
-  const prev=state.stock[id];
-  state.stock[id]=Math.max(0,prev+delta);
-  scheduleUndo({type:'stock',id,prev,label});
-  checkAutoAdd(id);
-}
-function haversine(la1,lo1,la2,lo2) {
-  const R=6371000, dL=(la2-la1)*Math.PI/180, dG=(lo2-lo1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-function todayStr() { const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
-function isInTimeWindow() {
-  const now=new Date();
-  const [sh,sm]=(document.getElementById('notif-start')?.value||'07:00').split(':').map(Number);
-  const [eh,em]=(document.getElementById('notif-end')?.value||'22:00').split(':').map(Number);
-  const cur=now.getHours()*60+now.getMinutes();
-  return cur>=sh*60+sm&&cur<=eh*60+em;
-}
+function getStatus(id){ const q=state.stock[id],t=state.thresholds[id]; return q===0?'empty':q<=t?'low':'ok'; }
+const SL={ ok:'✓ 在庫あり', low:'⚠ 残り少', empty:'✕ 切れ' };
+function isInList(id){ return state.shoppingList.some(i=>i.itemId===id&&!i.checkedAt); }
+function addToList(id,auto=false){ if(isInList(id)) return; state.shoppingList.push({id:state.nextId++,itemId:id,addedAuto:auto,checkedAt:null}); }
+function checkAutoAdd(id){ if(getStatus(id)!=='ok'&&!isInList(id)) addToList(id,true); }
+function changeStock(id,delta,label){ const prev=state.stock[id]; state.stock[id]=Math.max(0,prev+delta); scheduleUndo({type:'stock',id,prev,label}); checkAutoAdd(id); }
+function haversine(la1,lo1,la2,lo2){ const R=6371000,dL=(la2-la1)*Math.PI/180,dG=(lo2-lo1)*Math.PI/180; const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+function isInTimeWindow(){ const now=new Date(); const[sh,sm]=(document.getElementById('notif-start')?.value||'07:00').split(':').map(Number); const[eh,em]=(document.getElementById('notif-end')?.value||'22:00').split(':').map(Number); const cur=now.getHours()*60+now.getMinutes(); return cur>=sh*60+sm&&cur<=eh*60+em; }
 
 // ── UNDO ──
-function scheduleUndo(e) {
-  undoStack=e; clearTimeout(undoTimer);
-  document.getElementById('undo-msg').textContent=e.label;
-  document.getElementById('undo-banner').classList.add('visible');
-  undoTimer=setTimeout(clearUndo,4000);
-}
-function doUndo() {
-  if (!undoStack) return;
+function scheduleUndo(e){ undoStack=e; clearTimeout(undoTimer); document.getElementById('undo-msg').textContent=e.label; document.getElementById('undo-banner').classList.add('visible'); undoTimer=setTimeout(clearUndo,4000); }
+function doUndo(){
+  if(!undoStack) return;
   const e=undoStack;
-  if (e.type==='stock') state.stock[e.id]=e.prev;
-  if (e.type==='check') {
-    const si=state.shoppingList.find(i=>i.id===e.listId);
-    if (si) { si.checkedAt=null; state.stock[e.itemId]=Math.max(0,state.stock[e.itemId]-e.qty); }
-  }
-  if (e.type==='list-add') state.shoppingList=state.shoppingList.filter(i=>i.id!==e.listId);
+  if(e.type==='stock') state.stock[e.id]=e.prev;
+  if(e.type==='check'){ const si=state.shoppingList.find(i=>i.id===e.listId); if(si){si.checkedAt=null;state.stock[e.itemId]=Math.max(0,state.stock[e.itemId]-e.qty);} }
+  if(e.type==='list-add') state.shoppingList=state.shoppingList.filter(i=>i.id!==e.listId);
   clearUndo(); renderAll();
 }
-function clearUndo() {
-  undoStack=null; clearTimeout(undoTimer);
-  document.getElementById('undo-banner').classList.remove('visible');
-}
+function clearUndo(){ undoStack=null; clearTimeout(undoTimer); document.getElementById('undo-banner').classList.remove('visible'); }
 
 // ── 位置情報 ──
-function toggleGeo() { state.geo.watching ? stopGeo() : startGeo(); }
-function startGeo() {
-  if (!navigator.geolocation) { alert('このブラウザは位置情報をサポートしていません。'); return; }
+function toggleGeo(){ state.geo.watching?stopGeo():startGeo(); }
+function startGeo(){
+  if(!navigator.geolocation){ alert('このブラウザは位置情報をサポートしていません。'); return; }
   setGeoUI('searching','位置情報を取得中…');
-  navigator.geolocation.getCurrentPosition(onGeoOk, onGeoErr, {enableHighAccuracy:true,timeout:10000,maximumAge:0});
-  state.geo.watchId=navigator.geolocation.watchPosition(onGeoOk, onGeoErr, {enableHighAccuracy:true,timeout:10000,maximumAge:5000});
+  navigator.geolocation.getCurrentPosition(onGeoOk,onGeoErr,{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  state.geo.watchId=navigator.geolocation.watchPosition(onGeoOk,onGeoErr,{enableHighAccuracy:true,timeout:10000,maximumAge:5000});
   state.geo.watching=true;
   geoInterval=setInterval(checkGeofences,5000);
 }
-function stopGeo() {
-  if (state.geo.watchId!==null) navigator.geolocation.clearWatch(state.geo.watchId);
+function stopGeo(){
+  if(state.geo.watchId!==null) navigator.geolocation.clearWatch(state.geo.watchId);
   clearInterval(geoInterval);
   Object.assign(state.geo,{watching:false,watchId:null,lat:null,lng:null,acc:null});
   setGeoUI('inactive','位置情報：オフ','');
-  renderAll();
+  hideNearbyBanner(); renderAll();
 }
-function onGeoOk(pos) {
-  state.geo.lat=pos.coords.latitude;
-  state.geo.lng=pos.coords.longitude;
-  state.geo.acc=Math.round(pos.coords.accuracy);
-  setGeoUI('active',`取得中 (${state.geo.lat.toFixed(5)}, ${state.geo.lng.toFixed(5)})`,`±${state.geo.acc}m`);
+function onGeoOk(pos){
+  state.geo.lat=pos.coords.latitude; state.geo.lng=pos.coords.longitude; state.geo.acc=Math.round(pos.coords.accuracy);
+  setGeoUI('active',`取得中 (${state.geo.lat.toFixed(4)}, ${state.geo.lng.toFixed(4)})`,`±${state.geo.acc}m`);
   checkGeofences(); renderAll();
 }
-function onGeoErr(e) {
+function onGeoErr(e){
   const m={1:'位置情報へのアクセスが拒否されました',2:'位置情報を取得できませんでした',3:'取得がタイムアウトしました'};
-  setGeoUI('inactive', m[e.code]||'位置情報エラー','');
-  state.geo.watching=false;
+  setGeoUI('inactive',m[e.code]||'位置情報エラー',''); state.geo.watching=false;
 }
-function setGeoUI(s,l,a='') {
-  document.getElementById('geo-dot').className=`geo-dot ${s}`;
-  document.getElementById('geo-label').textContent=l;
-  document.getElementById('geo-acc').textContent=a;
-}
-function checkGeofences() {
-  if (!state.geo.lat||!state.geo.lng) return;
-  if (!state.shoppingList.some(i=>!i.checkedAt)) return;
-  if (!isInTimeWindow()) return;
-  for (const s of state.stores) {
-    const d=haversine(state.geo.lat,state.geo.lng,s.lat,s.lng);
-    s._dist=Math.round(d);
-    if (d<=s.radius && s.lastNotified!==todayStr()) {
-      s.lastNotified=todayStr();
-      fireToaster(s,d); break;
+function setGeoUI(s,l,a=''){ document.getElementById('geo-dot').className=`geo-dot ${s}`; document.getElementById('geo-label').textContent=l; document.getElementById('geo-acc').textContent=a; }
+
+// ── ジオフェンスチェック ──
+function checkGeofences(){
+  if(!state.geo.lat||!state.geo.lng) return;
+  const hasItems=state.shoppingList.some(i=>!i.checkedAt);
+
+  // 現在接近中の店舗との距離を再計算してバナー更新
+  if(state.nearbyStore){
+    const d=Math.round(haversine(state.geo.lat,state.geo.lng,state.nearbyStore.lat,state.nearbyStore.lng));
+    document.getElementById('nb-dist').textContent=`約${d}m`;
+    // 圏外に出たらバナーを消す
+    if(d > state.nearbyStore.radius * 1.3){
+      hideNearbyBanner();
     }
   }
-  renderAll();
+
+  if(!hasItems||!isInTimeWindow()) return;
+
+  for(const s of state.stores){
+    const d=haversine(state.geo.lat,state.geo.lng,s.lat,s.lng);
+    s._dist=Math.round(d);
+    if(d<=s.radius){
+      if(s.lastNotified===todayStr()) continue;
+      s.lastNotified=todayStr();
+      showNearbyBanner(s, Math.round(d));
+      break;
+    }
+  }
+  renderLocation();
 }
-function fireToaster(store, dist) {
-  const items=state.shoppingList.filter(i=>!i.checkedAt).map(i=>ITEMS.find(it=>it.id===i.itemId)?.name).filter(Boolean);
-  const preview=items.slice(0,2).join('・')+(items.length>2?`、他${items.length-2}品`:'');
-  document.getElementById('notif-body').innerHTML=
-    `${store.name}（約${Math.round(dist)}m）<br>買い物リスト：${preview}`;
-  const w=document.getElementById('toaster-wrap');
-  w.classList.add('visible');
-  setGeoUI('near',`${store.name} 付近`,`約${Math.round(dist)}m`);
-  setTimeout(()=>w.classList.remove('visible'),9000);
+
+// ── 接近バナーの表示・非表示 ──
+function showNearbyBanner(store, dist){
+  state.nearbyStore=store;
+  document.getElementById('nb-store').textContent=store.name;
+  document.getElementById('nb-sub').textContent=`付近にいます・買い物リスト ${state.shoppingList.filter(i=>!i.checkedAt).length}品`;
+  document.getElementById('nb-dist').textContent=`約${dist}m`;
+  document.getElementById('nearby-banner').classList.add('visible');
+  document.getElementById('tabs').classList.add('with-banner');
+  setGeoUI('near',`${store.name} 付近`,`約${dist}m`);
+  // タブバッジ更新
+  updateListBadge();
 }
-function openShoppingFromNotif() {
-  document.getElementById('toaster-wrap').classList.remove('visible');
-  switchTab('shopping');
+function hideNearbyBanner(){
+  state.nearbyStore=null;
+  document.getElementById('nearby-banner').classList.remove('visible');
+  document.getElementById('tabs').classList.remove('with-banner');
+  if(state.geo.lat){
+    setGeoUI('active',`取得中 (${state.geo.lat.toFixed(4)}, ${state.geo.lng.toFixed(4)})`,`±${state.geo.acc}m`);
+  }
 }
-function dismissNotif() { document.getElementById('toaster-wrap').classList.remove('visible'); }
-function simulateApproach(sid) {
-  const s=state.stores.find(x=>x.id===sid);
-  if (!s) return;
-  if (!state.shoppingList.some(i=>!i.checkedAt)) { alert('買い物リストが空のため通知は発生しません。\n在庫を減らしてからお試しください。'); return; }
+function updateListBadge(){
+  const n=state.shoppingList.filter(i=>!i.checkedAt).length;
+  const badge=document.getElementById('list-badge');
+  if(n>0&&state.nearbyStore){ badge.textContent=n; badge.style.display=''; }
+  else { badge.style.display='none'; }
+}
+function goToList(){ switchTab('shopping'); }
+
+// ── 接近シミュレーション ──
+function simulateApproach(sid){
+  const s=state.stores.find(x=>x.id===sid); if(!s) return;
+  if(!state.shoppingList.some(i=>!i.checkedAt)){ alert('買い物リストが空のため動作しません。\n在庫を減らしてからお試しください。'); return; }
   s.lastNotified=null;
-  fireToaster(s, Math.random()*s.radius*0.8+10);
+  showNearbyBanner(s, Math.round(s.radius*0.5));
   renderAll();
 }
-function useCurrentLocation() {
-  if (!state.geo.lat) { alert('まず📍で位置情報を開始してください。'); return; }
-  document.getElementById('inp-lat').value=state.geo.lat.toFixed(6);
-  document.getElementById('inp-lng').value=state.geo.lng.toFixed(6);
-}
-function addStore() {
-  const name=document.getElementById('inp-name').value.trim();
-  const lat=parseFloat(document.getElementById('inp-lat').value);
-  const lng=parseFloat(document.getElementById('inp-lng').value);
-  const radius=parseInt(document.getElementById('inp-radius').value)||200;
-  if (!name) { alert('店舗名を入力してください'); return; }
-  if (isNaN(lat)||isNaN(lng)) { alert('緯度・経度を入力してください'); return; }
-  state.stores.push({id:'s'+Date.now(),name,lat,lng,radius,lastNotified:null});
-  document.getElementById('inp-name').value='';
-  document.getElementById('inp-lat').value='';
-  document.getElementById('inp-lng').value='';
-  renderAll();
-}
-function deleteStore(id)    { state.stores=state.stores.filter(s=>s.id!==id); renderAll(); }
+function useCurrentLocation(){ if(!state.geo.lat){alert('まず📍で位置情報を開始してください。');return;} document.getElementById('inp-lat').value=state.geo.lat.toFixed(6); document.getElementById('inp-lng').value=state.geo.lng.toFixed(6); }
+function addStore(){ const name=document.getElementById('inp-name').value.trim(); const lat=parseFloat(document.getElementById('inp-lat').value); const lng=parseFloat(document.getElementById('inp-lng').value); const radius=parseInt(document.getElementById('inp-radius').value)||200; if(!name){alert('店舗名を入力してください');return;} if(isNaN(lat)||isNaN(lng)){alert('緯度・経度を入力してください');return;} state.stores.push({id:'s'+Date.now(),name,lat,lng,radius,lastNotified:null}); document.getElementById('inp-name').value=''; document.getElementById('inp-lat').value=''; document.getElementById('inp-lng').value=''; renderAll(); }
+function deleteStore(id){ state.stores=state.stores.filter(s=>s.id!==id); renderAll(); }
 function resetStoreNotif(id){ const s=state.stores.find(s=>s.id===id); if(s){s.lastNotified=null;renderAll();} }
 
 // ── 在庫レンダリング ──
-function renderStock() {
+function renderStock(){
   const c=document.getElementById('stock-cards'); c.innerHTML='';
   ITEMS.forEach(item=>{
-    const qty=state.stock[item.id], max=state.defaultQty[item.id]*1.5;
+    const qty=state.stock[item.id],max=state.defaultQty[item.id]*1.5;
     const pct=Math.min(100,Math.round(qty/max*100));
-    const st=getStatus(item.id), inL=isInList(item.id);
+    const st=getStatus(item.id),inL=isInList(item.id);
     const step=item.unit==='個'?1:item.unit==='ml'?100:50;
-    const d=document.createElement('div');
-    d.className='stock-card';
+    const d=document.createElement('div'); d.className='stock-card';
     d.innerHTML=`
       <div class="card-gauge g-${st}"></div>
       <div class="card-inner">
@@ -898,94 +790,109 @@ function renderStock() {
           <div class="status-badge s-${st}">${SL[st]}</div>
         </div>
         <div class="card-name">${item.name}</div>
-        <div class="qty-row">
-          <div class="qty-num">${qty}</div>
-          <div class="qty-unit">${item.unit}</div>
-        </div>
-        <div class="prog-track">
-          <div class="prog-fill f-${st}" style="width:${pct}%"></div>
-        </div>
+        <div class="qty-row"><div class="qty-num">${qty}</div><div class="qty-unit">${item.unit}</div></div>
+        <div class="prog-track"><div class="prog-fill f-${st}" style="width:${pct}%"></div></div>
         <div class="card-acts">
           <div class="qty-ctrl">
             <button class="qbtn" onclick="consume('${item.id}')">−</button>
             <div class="q-label">${step}${item.unit}</div>
             <button class="qbtn" onclick="addStock('${item.id}')">＋</button>
           </div>
-          ${inL
-            ?`<button class="act-btn listed">リスト追加済み</button>`
-            :`<button class="act-btn list-add" onclick="manualAdd('${item.id}')">リストへ</button>`}
+          ${inL?`<button class="act-btn listed">リスト追加済み</button>`:`<button class="act-btn list-add" onclick="manualAdd('${item.id}')">リストへ</button>`}
         </div>
       </div>`;
     c.appendChild(d);
   });
 }
-function consume(id) {
-  const item=ITEMS.find(i=>i.id===id), step=item.unit==='個'?1:item.unit==='ml'?100:50;
-  changeStock(id,-step,`${item.name} ${step}${item.unit}を消費 → 元に戻す`);
-  renderAll();
-}
-function addStock(id) {
-  const item=ITEMS.find(i=>i.id===id), step=item.unit==='個'?1:item.unit==='ml'?100:50;
-  changeStock(id,step,`${item.name} +${step}${item.unit} → 元に戻す`);
-  renderAll();
-}
-function manualAdd(id) {
-  const item=ITEMS.find(i=>i.id===id), lid=state.nextId;
-  addToList(id,false);
-  scheduleUndo({type:'list-add',listId:lid,label:`${item.name}をリストに追加 → 元に戻す`});
-  renderAll();
-}
+function consume(id){ const item=ITEMS.find(i=>i.id===id),step=item.unit==='個'?1:item.unit==='ml'?100:50; changeStock(id,-step,`${item.name} ${step}${item.unit}を消費 → 元に戻す`); renderAll(); }
+function addStock(id){ const item=ITEMS.find(i=>i.id===id),step=item.unit==='個'?1:item.unit==='ml'?100:50; changeStock(id,step,`${item.name} +${step}${item.unit} → 元に戻す`); renderAll(); }
+function manualAdd(id){ const item=ITEMS.find(i=>i.id===id),lid=state.nextId; addToList(id,false); scheduleUndo({type:'list-add',listId:lid,label:`${item.name}をリストに追加 → 元に戻す`}); renderAll(); }
 
 // ── 買い物リストレンダリング ──
-function renderShopping() {
+function renderShopping(){
   const lEl=document.getElementById('shopping-list');
-  const sEl=document.getElementById('shopping-summary');
-  lEl.innerHTML=''; sEl.innerHTML='';
+  const hEl=document.getElementById('list-header-area');
+  lEl.innerHTML=''; hEl.innerHTML='';
+
   const active=state.shoppingList.filter(i=>!i.checkedAt);
   const done  =state.shoppingList.filter(i=> i.checkedAt);
-  if (!state.shoppingList.length) {
+
+  // バッジ更新
+  updateListBadge();
+
+  if(!state.shoppingList.length){
     lEl.innerHTML=`<div class="shop-empty"><div class="shop-empty-icon">🛍️</div><div class="shop-empty-txt">買い物リストは空です。<br>在庫が少なくなると自動で追加されます。</div></div>`;
     return;
   }
-  if (active.length) {
-    sEl.innerHTML=`<div class="summary-bar">
-      <div class="summ-count">${active.length}</div>
-      <div class="summ-txt">${active.length}品を購入予定<br><span style="opacity:.75;font-size:11px">チェックで在庫に即時反映</span></div>
-      <div class="summ-icon">🧺</div>
-    </div>`;
+
+  // ヘッダーエリア
+  if(active.length){
+    hEl.innerHTML=`<div class="list-header">
+      <div class="lh-count">${active.length}</div>
+      <div class="lh-text">${active.length}品を購入予定<br><span style="opacity:.75;font-size:11px">チェックで在庫に即時反映</span></div>
+      <div style="font-size:24px">🧺</div></div>`;
+  } else if(done.length){
+    hEl.innerHTML=`<div class="lh-all-done"><span style="font-size:22px">✅</span> 全品購入済みです！</div>`;
   }
-  const mk=(si,checked)=>{
-    const item=ITEMS.find(i=>i.id===si.itemId), dq=state.defaultQty[si.itemId];
+
+  // 未購入アイテム（大きく・見やすく）
+  active.forEach(si=>{
+    const item=ITEMS.find(i=>i.id===si.itemId);
+    const st=getStatus(si.itemId);
+    const qty=state.stock[si.itemId];
+    const dq=state.defaultQty[si.itemId];
+    const maxQ=dq*1.5;
+    const pct=Math.min(100,Math.round(qty/maxQ*100));
     const el=document.createElement('div');
-    el.className=`shop-item${checked?' checked':''}`;
+    el.className=`shop-item st-${st}`;
     el.innerHTML=`
       <div class="reflect-flash" id="fl-${si.id}"></div>
-      <div class="check-circle" onclick="toggleCheck(${si.id})">${checked?'✓':''}</div>
-      <div class="shop-emoji">${item.emoji}</div>
-      <div class="shop-info">
-        <div class="shop-name">${item.name}</div>
-        <div class="shop-qty">+${dq}${item.unit}</div>
-      </div>
-      <div class="shop-src">${si.addedAuto?'自動提案':'手動追加'}</div>`;
+      <div class="shop-item-body">
+        <div class="check-circle" id="cc-${si.id}"></div>
+        <div class="shop-item-info">
+          <div class="shop-emoji">${item.emoji}</div>
+          <div class="shop-name">${item.name}</div>
+          <div class="shop-stock-row">
+            <span class="shop-stock-badge s-${st}">${SL[st]}</span>
+            <span class="shop-arrow">→</span>
+            <span class="shop-after">+${dq}${item.unit}</span>
+          </div>
+          <div class="shop-current">現在 ${qty}${item.unit}　チェックで ${qty+dq}${item.unit} に</div>
+          <div class="shop-prog"><div class="shop-prog-fill f-${st}" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+    el.addEventListener('click', ()=>toggleCheck(si.id));
     lEl.appendChild(el);
-  };
-  active.forEach(si=>mk(si,false));
-  if (done.length) {
-    const sep=document.createElement('div');
-    sep.style.cssText='font-size:10px;color:var(--ink3);margin:14px 0 8px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase';
-    sep.textContent='購入済み';
-    lEl.appendChild(sep);
-    done.forEach(si=>mk(si,true));
+  });
+
+  // 購入済み
+  if(done.length){
+    const sep=document.createElement('div'); sep.className='done-sep'; sep.textContent='購入済み'; lEl.appendChild(sep);
+    done.forEach(si=>{
+      const item=ITEMS.find(i=>i.id===si.itemId); const dq=state.defaultQty[si.itemId];
+      const el=document.createElement('div');
+      el.className='shop-item checked';
+      el.innerHTML=`
+        <div class="shop-item-body">
+          <div class="check-circle" style="background:var(--ok);border-color:var(--ok);color:#fff;font-size:22px">✓</div>
+          <div class="shop-item-info">
+            <div class="shop-emoji">${item.emoji}</div>
+            <div class="shop-name">${item.name}</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:4px">+${dq}${item.unit} 在庫に反映済み</div>
+          </div>
+        </div>`;
+      el.addEventListener('click',()=>toggleCheck(si.id));
+      lEl.appendChild(el);
+    });
   }
 }
-function toggleCheck(lid) {
+
+function toggleCheck(lid){
   const si=state.shoppingList.find(i=>i.id===lid); if(!si) return;
-  const item=ITEMS.find(i=>i.id===si.itemId), dq=state.defaultQty[si.itemId];
-  if (!si.checkedAt) {
-    si.checkedAt=Date.now();
-    state.stock[si.itemId]+=dq;
-    scheduleUndo({type:'check',listId:lid,itemId:si.itemId,qty:dq,
-      label:`${item.name} +${dq}${item.unit}を在庫に反映 → 元に戻す`});
+  const item=ITEMS.find(i=>i.id===si.itemId); const dq=state.defaultQty[si.itemId];
+  if(!si.checkedAt){
+    si.checkedAt=Date.now(); state.stock[si.itemId]+=dq;
+    scheduleUndo({type:'check',listId:lid,itemId:si.itemId,qty:dq,label:`${item.name} +${dq}${item.unit}を在庫に反映 → 元に戻す`});
     const fl=document.getElementById(`fl-${lid}`);
     if(fl){fl.classList.add('on');setTimeout(()=>fl.classList.remove('on'),180);}
   } else {
@@ -994,34 +901,18 @@ function toggleCheck(lid) {
   renderAll();
 }
 
-// ── 店舗タブレンダリング ──
-function renderLocation() {
+// ── 店舗タブ ──
+function renderLocation(){
   const lp=document.getElementById('loc-panel');
   lp.innerHTML=state.geo.lat
-    ?`<div class="loc-panel">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:16px">🟢</span>
-          <span style="font-size:13px;font-weight:600">位置情報 取得中</span>
-        </div>
-        <div style="font-size:12px;color:var(--ink3);font-family:monospace;line-height:1.8">
-          緯度：${state.geo.lat.toFixed(6)}<br>経度：${state.geo.lng.toFixed(6)}
-        </div>
-        <div style="font-size:11px;color:var(--ink3);margin-top:4px">精度：±${state.geo.acc}m</div>
-      </div>`
-    :`<div class="loc-panel">
-        <div style="font-size:13px;color:var(--ink3)">📍 ボタンをタップして位置情報を開始してください。</div>
-      </div>`;
-
+    ?`<div class="loc-panel"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span>🟢</span><span style="font-size:13px;font-weight:600">位置情報 取得中</span></div><div style="font-size:12px;color:var(--ink3);font-family:monospace;line-height:1.8">緯度 ${state.geo.lat.toFixed(6)}<br>経度 ${state.geo.lng.toFixed(6)}</div><div style="font-size:11px;color:var(--ink3);margin-top:4px">精度 ±${state.geo.acc}m</div></div>`
+    :`<div class="loc-panel"><div style="font-size:13px;color:var(--ink3)">📍 ボタンで位置情報を開始してください。</div></div>`;
   const sl=document.getElementById('store-list'); sl.innerHTML='';
-  if (!state.stores.length) {
-    sl.innerHTML=`<div style="color:var(--ink3);font-size:13px;padding:12px 0">登録店舗はありません。</div>`;
-  }
+  if(!state.stores.length){ sl.innerHTML=`<div style="color:var(--ink3);font-size:13px;padding:12px 0">登録店舗はありません。</div>`; }
   state.stores.forEach(s=>{
     const dist=state.geo.lat?Math.round(haversine(state.geo.lat,state.geo.lng,s.lat,s.lng)):null;
-    const nearby=dist!==null&&dist<=s.radius;
-    const noted=s.lastNotified===todayStr();
-    const d=document.createElement('div');
-    d.className=`store-card${nearby?' nearby':''}`;
+    const nearby=dist!==null&&dist<=s.radius; const noted=s.lastNotified===todayStr();
+    const d=document.createElement('div'); d.className=`store-card${nearby?' nearby':''}`;
     d.innerHTML=`
       <div class="store-card-head">
         <span style="font-size:22px">🏪</span>
@@ -1029,19 +920,17 @@ function renderLocation() {
         ${nearby?`<span class="nearby-badge">付近</span>`:''}
         <div class="store-dist">${dist!==null?(dist<1000?dist+'m':(dist/1000).toFixed(1)+'km'):'—'}</div>
       </div>
-      <div class="store-meta">半径${s.radius}m　${noted?'<span style="color:var(--warn)">本日通知済み</span>':'通知待機中'}</div>
+      <div class="store-meta">半径 ${s.radius}m　${noted?'<span style="color:var(--warn)">本日通知済み</span>':'通知待機中'}</div>
       <div class="store-acts">
-        ${noted
-          ?`<button class="store-btn" onclick="resetStoreNotif('${s.id}')">通知をリセット</button>`
-          :`<button class="store-btn primary" onclick="simulateApproach('${s.id}')">📡 接近シミュレーション</button>`}
+        ${noted?`<button class="store-btn" onclick="resetStoreNotif('${s.id}')">通知をリセット</button>`:`<button class="store-btn primary" onclick="simulateApproach('${s.id}')">📡 接近をシミュレーション</button>`}
         <button class="store-btn danger" onclick="deleteStore('${s.id}')">削除</button>
       </div>`;
     sl.appendChild(d);
   });
 }
 
-// ── 設定レンダリング ──
-function renderSettings() {
+// ── 設定 ──
+function renderSettings(){
   ['thresh-rows','defqty-rows'].forEach((elId,idx)=>{
     const el=document.getElementById(elId); el.innerHTML='';
     ITEMS.forEach(item=>{
@@ -1050,28 +939,19 @@ function renderSettings() {
       const dec=idx===0?`adjT('${item.id}',-1)`:`adjD('${item.id}',-1)`;
       const inc=idx===0?`adjT('${item.id}',1)` :`adjD('${item.id}',1)`;
       const row=document.createElement('div'); row.className='thresh-row';
-      row.innerHTML=`
-        <div class="t-emoji">${item.emoji}</div>
-        <div class="t-name">${item.name}</div>
-        <div class="t-ctrl">
-          <button class="t-btn" onclick="${dec}">−</button>
-          <div class="t-val">${val}</div>
-          <button class="t-btn" onclick="${inc}">＋</button>
-        </div>
-        <div class="t-unit">${item.unit}</div>`;
+      row.innerHTML=`<div class="t-emoji">${item.emoji}</div><div class="t-name">${item.name}</div><div class="t-ctrl"><button class="t-btn" onclick="${dec}">−</button><div class="t-val">${val}</div><button class="t-btn" onclick="${inc}">＋</button></div><div class="t-unit">${item.unit}</div>`;
       el.appendChild(row);
     });
   });
 }
-function adjT(id,dir){const s=ITEMS.find(i=>i.id===id),step=s.unit==='個'?1:s.unit==='ml'?100:50;state.thresholds[id]=Math.max(0,state.thresholds[id]+dir*step);renderSettings();renderStock();}
-function adjD(id,dir){const s=ITEMS.find(i=>i.id===id),step=s.unit==='個'?1:s.unit==='ml'?100:50;state.defaultQty[id]=Math.max(step,state.defaultQty[id]+dir*step);renderSettings();}
+function adjT(id,dir){ const s=ITEMS.find(i=>i.id===id),step=s.unit==='個'?1:s.unit==='ml'?100:50; state.thresholds[id]=Math.max(0,state.thresholds[id]+dir*step); renderSettings(); renderStock(); }
+function adjD(id,dir){ const s=ITEMS.find(i=>i.id===id),step=s.unit==='個'?1:s.unit==='ml'?100:50; state.defaultQty[id]=Math.max(step,state.defaultQty[id]+dir*step); renderSettings(); }
 
-// ── タブ切替・全体レンダリング ──
-function switchTab(name) {
+function switchTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${name}`));
 }
-function renderAll() { renderStock(); renderShopping(); renderLocation(); renderSettings(); }
+function renderAll(){ renderStock(); renderShopping(); renderLocation(); renderSettings(); }
 
 // 初期化
 state.stock.milk=200;
