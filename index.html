@@ -466,6 +466,30 @@ body::before {
 .undo-btn:active { background: rgba(255,255,255,.35); }
 
 @keyframes riseUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══ トグルスイッチ ══ */
+.toggle-sw { position:relative; display:inline-block; cursor:pointer; }
+.toggle-sw input { position:absolute; opacity:0; width:0; height:0; }
+.toggle-track {
+  display:block; width:44px; height:26px; border-radius:13px;
+  background:var(--line); transition:background .2s;
+  position:relative;
+}
+.toggle-sw input:checked + .toggle-track { background:var(--crust); }
+.toggle-thumb {
+  position:absolute; top:3px; left:3px;
+  width:20px; height:20px; border-radius:50%;
+  background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.2);
+  transition:transform .2s cubic-bezier(.34,1.4,.64,1);
+}
+.toggle-sw input:checked + .toggle-track .toggle-thumb { transform:translateX(18px); }
+
+/* 読み上げ中インジケーター */
+.speaking-dot {
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:var(--crust); margin-left:6px; vertical-align:middle;
+  animation:blink .6s infinite;
+}
 </style>
 </head>
 <body>
@@ -493,7 +517,7 @@ body::before {
         </defs>
       </svg>
       <div>
-        <div class="logo-ja">アシタノパン</div>
+        <div class="logo-ja">アシタノパン<span class="speaking-dot" id="speaking-dot" style="display:none"></span></div>
         <div class="logo-tagline">明日の食卓を、今日整える</div>
       </div>
     </div>
@@ -611,10 +635,45 @@ body::before {
           style="width:90px;height:30px;font-size:13px;border-radius:8px;padding:0 8px">
       </div>
     </div>
+    <div class="sec-label">音声読み上げ</div>
+    <div class="thresh-panel">
+      <div class="thresh-title">🔊 読み上げ設定</div>
+      <div class="thresh-row">
+        <div class="t-emoji">📍</div>
+        <div class="t-name">スーパー接近時に読み上げ</div>
+        <label class="toggle-sw">
+          <input type="checkbox" id="voice-nearby" checked onchange="saveVoiceSettings()">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="thresh-row">
+        <div class="t-emoji">🛒</div>
+        <div class="t-name">リストを開いたとき読み上げ</div>
+        <label class="toggle-sw">
+          <input type="checkbox" id="voice-list" checked onchange="saveVoiceSettings()">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="thresh-row" style="border-bottom:none">
+        <div class="t-emoji">🔈</div>
+        <div class="t-name">読み上げ速度</div>
+        <div class="t-ctrl">
+          <button class="t-btn" onclick="adjRate(-1)">−</button>
+          <div class="t-val" id="rate-val">標準</div>
+          <button class="t-btn" onclick="adjRate(1)">＋</button>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <button onclick="testVoice()" style="width:100%;height:36px;border-radius:20px;border:1.5px solid var(--crust);background:var(--crust-lt);color:var(--sesame);font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans JP',sans-serif">
+          ▶ 読み上げをテスト
+        </button>
+      </div>
+    </div>
     <div style="padding:12px 16px;background:var(--crumb2);border-radius:var(--r);border:1.5px solid var(--line)">
       <div style="font-size:11px;color:var(--ink3);line-height:2">
         食材3種類固定（たまご・牛乳・もやし）<br>
         位置情報はブラウザの Geolocation API を使用<br>
+        音声は Web Speech API を使用<br>
         データはメモリ内保持（リロードでリセット）
       </div>
     </div>
@@ -733,6 +792,105 @@ function checkGeofences(){
 }
 
 // ── 接近バナーの表示・非表示 ──
+// ══════════════════════════════════
+//  音声読み上げエンジン (Web Speech API)
+// ══════════════════════════════════
+const voice = {
+  enabled: true,
+  nearbyOn: true,
+  listOn:   true,
+  rateIdx:  1,            // 0=遅い 1=標準 2=速い
+  rates:    [0.8, 1.0, 1.3],
+  rateLabels: ['ゆっくり','標準','速い'],
+  speaking:   false,
+};
+
+function speak(text, onEnd) {
+  if (!('speechSynthesis' in window)) return;
+  // 読み上げ中なら停止して上書き
+  window.speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang  = 'ja-JP';
+  utter.rate  = voice.rates[voice.rateIdx];
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  // 日本語音声を優先選択
+  const voices = window.speechSynthesis.getVoices();
+  const jaVoice = voices.find(v =>
+    v.lang.startsWith('ja') && (v.localService || v.name.includes('Google'))
+  ) || voices.find(v => v.lang.startsWith('ja'));
+  if (jaVoice) utter.voice = jaVoice;
+
+  utter.onstart = () => { voice.speaking = true; updateSpeakingUI(true); };
+  utter.onend   = () => { voice.speaking = false; updateSpeakingUI(false); if(onEnd) onEnd(); };
+  utter.onerror = () => { voice.speaking = false; updateSpeakingUI(false); };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function updateSpeakingUI(on) {
+  // ロゴ横に読み上げ中ドットを表示
+  const dot = document.getElementById('speaking-dot');
+  if (dot) dot.style.display = on ? 'inline-block' : 'none';
+}
+
+// 接近時の読み上げ文を生成
+function buildNearbyScript(store, dist) {
+  const items = state.shoppingList.filter(i => !i.checkedAt);
+  if (!items.length) return null;
+
+  const stStatus = id => ({ ok:'', low:'残り少です。', empty:'切れています。' }[getStatus(id)]);
+  const itemLines = items.map(si => {
+    const item = ITEMS.find(i => i.id === si.itemId);
+    const s = stStatus(si.itemId);
+    return `${item.name}、${s}`;
+  }).join('　');
+
+  return `${store.name}の近くです。約${dist}メートル。` +
+         `買い物リストは${items.length}品です。　${itemLines}`;
+}
+
+// リストを開いたときの読み上げ文を生成
+function buildListScript() {
+  const items = state.shoppingList.filter(i => !i.checkedAt);
+  if (!items.length) return '買い物リストは空です。';
+
+  const stStatus = id => ({ ok:'在庫あり。', low:'残り少です。', empty:'切れています。' }[getStatus(id)]);
+  const lines = items.map(si => {
+    const item = ITEMS.find(i => i.id === si.itemId);
+    return `${item.name}、${stStatus(si.itemId)}`;
+  }).join('　');
+
+  return `買い物リストです。${items.length}品あります。　${lines}`;
+}
+
+function saveVoiceSettings() {
+  voice.nearbyOn = document.getElementById('voice-nearby').checked;
+  voice.listOn   = document.getElementById('voice-list').checked;
+}
+
+function adjRate(dir) {
+  voice.rateIdx = Math.max(0, Math.min(2, voice.rateIdx + dir));
+  document.getElementById('rate-val').textContent = voice.rateLabels[voice.rateIdx];
+}
+
+function testVoice() {
+  // voicesが空の場合を考慮して少し待つ
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => speak('テストです。アシタノパンです。');
+  } else {
+    speak('テストです。アシタノパンです。たまご、残り少です。牛乳、切れています。');
+  }
+}
+
+// ── Android/Chrome向け：voicesの非同期ロード対策 ──
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices(); // キャッシュ初期化
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
 function showNearbyBanner(store, dist){
   state.nearbyStore=store;
   document.getElementById('nb-store').textContent=store.name;
@@ -741,8 +899,13 @@ function showNearbyBanner(store, dist){
   document.getElementById('nearby-banner').classList.add('visible');
   document.getElementById('tabs').classList.add('with-banner');
   setGeoUI('near',`${store.name} 付近`,`約${dist}m`);
-  // タブバッジ更新
   updateListBadge();
+
+  // 🔊 接近時の読み上げ
+  if (voice.nearbyOn) {
+    const script = buildNearbyScript(store, dist);
+    if (script) speak(script);
+  }
 }
 function hideNearbyBanner(){
   state.nearbyStore=null;
@@ -758,9 +921,24 @@ function updateListBadge(){
   if(n>0&&state.nearbyStore){ badge.textContent=n; badge.style.display=''; }
   else { badge.style.display='none'; }
 }
-function goToList(){ switchTab('shopping'); }
+function goToList(){
+  switchTab('shopping');
+  // 🔊 リストタブを開いたとき読み上げ
+  if (voice.listOn) {
+    const script = buildListScript();
+    if (script) speak(script);
+  }
+}
 
-// ── 接近シミュレーション ──
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${name}`));
+  // 🔊 タブを直接タップしてリストを開いたときも読み上げ
+  if (name === 'shopping' && voice.listOn) {
+    const script = buildListScript();
+    if (script) speak(script);
+  }
+}
 function simulateApproach(sid){
   const s=state.stores.find(x=>x.id===sid); if(!s) return;
   if(!state.shoppingList.some(i=>!i.checkedAt)){ alert('買い物リストが空のため動作しません。\n在庫を減らしてからお試しください。'); return; }
